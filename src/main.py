@@ -62,6 +62,19 @@ def add_member():
     db.session.commit()
     
     return jsonify(member.serialize()), 201
+
+@app.route('/all', methods=['GET'])
+def get_all_family_members():
+    
+    family = []
+    response_family = Person.query.all()
+    
+    for member in response_family:
+        family.append(member.serialize())
+    
+    return jsonify(family), 200
+    
+    
     
     
 # this only runs if `$ python src/main.py` is executed
