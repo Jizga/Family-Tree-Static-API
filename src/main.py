@@ -73,6 +73,14 @@ def get_all_family_members():
         family.append(member.serialize())
     
     return jsonify(family), 200
+
+@app.route('/member/<int:id>', methods=['GET'])
+def get_single_member(id):
+    
+    body = request.get_json()
+    member_selected = Person.query.get(id)
+    
+    return jsonify(member_selected.serialize()), 200
     
     
     
