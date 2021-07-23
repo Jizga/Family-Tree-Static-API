@@ -40,12 +40,16 @@ def add_member():
     age = body_request.get("age", None)
     relations = body_request.get("relations", None)
     
+    family_member_id = body_request.get("familyMemberId", None)
+    
     member = Person(
         name = name,
         last_name = last_name,
         age = age,
-        relations = relations
+        #relations = relations
+        relations = Relations(family_member_id = family_member_id)
     )
+    
     
     db.session.add(member)
     db.session.commit()
