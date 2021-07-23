@@ -1,30 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
 
 db = SQLAlchemy()
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
-        }
         
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     age = db.Column(db.Integer)
-    parent_one_id = db.Column(db.Integer)
-    parent_two_id = db.Column(db.Integer)
+    
+    relations = db.relationship('Relations',  backref = 'person', lazy = 'dynamic', foreign_keys ='Relations.person_id')
+    family_member = db.relationship('Relations',  backref = 'family_member', lazy = 'dynamic', foreign_keys ='Relations.family_member_id')
+    
     
     def __repr__(self):
         return '<Person %r>' % self.name
@@ -35,7 +22,24 @@ class Person(db.Model):
             "name": self.name,
             "last_name": self.last_name,
             "age": self.age,
-            "parent_one_id": self.parent_one_id,
-            "parent_two_id": self.parent_two_id  
+            "relations": list(map(lambda x: x.serialize(), self.relations))
+        }
+        
+class Relations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
+    family_member_id = db.Column(db.Integer, db.ForeignKey("person.id")) 
+    relation_name = db.Column(db.String(120), nullable=True)
+    
+    
+    def __repr__(self):
+        return '<Relations>'
+        
+    def serialize(self):
+        return {
+            "id": self.id,
+            "person_id": self.person_id,
+            "family_member_id": self.family_member_id,
+            "relation_name": self.relation_name
         }
     

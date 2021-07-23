@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Person
+from models import db, Person, Relations
 #from models import Person
 
 app = Flask(__name__)
@@ -30,15 +30,6 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
-
 
 @app.route('/member', methods=['POST'])
 def add_member():
@@ -47,15 +38,13 @@ def add_member():
     name = body_request.get("name", None)
     last_name = body_request.get("lastName", None)
     age = body_request.get("age", None)
-    parent_one_id = body_request.get("parentOneId", None)
-    parent_two_id = body_request.get("parentTwoId", None)
+    relations = body.get("relations", None)
     
     member = Person(
         name = name,
         last_name = last_name,
         age = age,
-        parent_one_id = parent_one_id,
-        parent_two_id = parent_two_id
+        relations = relations
     )
     
     db.session.add(member)
