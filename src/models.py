@@ -9,8 +9,14 @@ class Person(db.Model):
     last_name = db.Column(db.String(100), nullable=False)
     age = db.Column(db.Integer)
     
-    relations = db.relationship('Relations',  backref = 'person', lazy = 'dynamic', foreign_keys ='Relations.person_id')
-    family_member = db.relationship('Relations',  backref = 'family_member', lazy = 'dynamic', foreign_keys ='Relations.family_member_id')
+    relations = db.relationship('Relations', 
+                                backref = 'person', 
+                                lazy = 'dynamic', 
+                                foreign_keys ='Relations.person_id')
+    family_member = db.relationship('Relations', 
+                                    backref = 'family_member', 
+                                    lazy = 'dynamic', 
+                                    foreign_keys ='Relations.family_member_id')
     
     
     def __repr__(self):
@@ -22,7 +28,7 @@ class Person(db.Model):
             "name": self.name,
             "last_name": self.last_name,
             "age": self.age,
-            "relations": list(map(lambda x: x.serialize(), self.relations))
+            "relations": self.relations
         }
         
 class Relations(db.Model):

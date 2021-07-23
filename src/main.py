@@ -38,7 +38,7 @@ def add_member():
     name = body_request.get("name", None)
     last_name = body_request.get("lastName", None)
     age = body_request.get("age", None)
-    relations = body.get("relations", None)
+    relations = body_request.get("relations", None)
     
     member = Person(
         name = name,
