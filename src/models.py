@@ -9,9 +9,10 @@ class Person(db.Model):
     last_name = db.Column(db.String(100), nullable=False)
     age = db.Column(db.Integer)
     
-    relations = db.relationship('Relations',  backref = 'person', lazy = 'dynamic', foreign_keys ='Relations.person_id')
-    family_member = db.relationship('Relations',  backref = 'family_member', lazy = 'dynamic', foreign_keys ='Relations.family_member_id')
-    
+    # --- Para poder usar 2 foreign_keys que hacen referencia a una misma tabla
+    # y para poder hacer la relación entre personas
+    relations = db.relationship('Relations', backref = 'person', lazy='joined', foreign_keys ='Relations.person_id')
+    family_member = db.relationship('Relations',  backref = 'family_member', lazy = 'joined', foreign_keys ='Relations.family_member_id')
     
     def __repr__(self):
         return '<Person %r>' % self.name
@@ -21,25 +22,21 @@ class Person(db.Model):
             "id": self.id,
             "name": self.name,
             "last_name": self.last_name,
-            "age": self.age,
-            "relations": list(map(lambda x: x.serialize(), self.relations))
+            "age": self.age
         }
         
 class Relations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
     family_member_id = db.Column(db.Integer, db.ForeignKey("person.id")) 
-    relation_name = db.Column(db.String(120), nullable=True)
-    
+    relation_type = db.Column(db.String(120), nullable=True)
     
     def __repr__(self):
         return '<Relations>'
         
     def serialize(self):
         return {
-            "id": self.id,
-            "person_id": self.person_id,
-            "family_member_id": self.family_member_id,
-            "relation_name": self.relation_name
+            # Sólo interesa sacar el tipo de relación, ya que el resto de la info la aporta la tabla "Person"
+            "relation_type": self.relation_type
         }
     
